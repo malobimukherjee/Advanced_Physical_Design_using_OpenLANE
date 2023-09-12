@@ -104,6 +104,8 @@ The final ICs are ready for deployment in various electronic devices and systems
 
 ![Screenshot from 2023-09-13 00-15-36](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/a09241ee-1923-4a0c-86b7-a31df43b6364)
 
+</details>
+
 <details>
  
 <summary>Installation of OpenLANE</summary>
