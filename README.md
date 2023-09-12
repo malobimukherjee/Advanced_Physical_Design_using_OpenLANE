@@ -145,7 +145,10 @@ make test
 cd /home/malobi/OpenLane/designs/ci
 cp -r * ../
 ```
-## Steps for Synthesis in OpenLANE:
+</details>
+<details>
+ 
+<summary>Steps for Synthesis in OpenLANE:</summary>
 
 ```bash
 cd ~/OpenLane
