@@ -145,8 +145,21 @@ make test
 cd /home/malobi/OpenLane/designs/ci
 cp -r * ../
 ```
+## Steps for Synthesis in OpenLANE:
+
+```bash
+cd ~/OpenLane
+make mount
+./flow.tcl -interactive
+package require openlane 0.9
+prep -design picorv32a
+run_synthesis
+```
+
 
 ![Screenshot from 2023-09-10 23-48-30](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/3b6344f5-ab14-4a9c-8268-9c965b6e60f5)
+
+![Screenshot from 2023-09-11 00-09-35](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/dfcc7032-5ff2-43ec-a521-ff6d90db3740)
 
  
 </details>
