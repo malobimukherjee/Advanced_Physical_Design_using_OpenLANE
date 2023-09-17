@@ -765,3 +765,23 @@ set $::env(CTS_CLK_BUFFER_LIST) [lreplace $::env(CTS_CLK_BUFFER_LIST) 0 0]
 echo $::env(CTS_CLK_BUFFER_LIST)
 ```
 </details>
+
+## Day 5
+
+<details>
+<summary>Final Step in RTL2GDS using tritonRoute and OpenSTA</summary>
+
+## DRC
+
+ The following command is used to check the last stage the design ran:
+
+ ```bash
+echo $::env(CURRENT_DEF)
+```
+
+Now run the following command after the cts:
+
+```bash
+gen_pdn
+```
+</details>
