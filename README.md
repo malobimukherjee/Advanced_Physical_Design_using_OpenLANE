@@ -462,9 +462,10 @@ Vin in 0 0 pulse 0 2.5 0 10p 10p 1n 2n
 .LIB "tsmc_025um_model.mod" cmos_models
 .end
 ```
-
 </details>
+
 <details>
+	
 <summary>CMOS Fabrication</summary>
 
 ## Inverter Standard Cell Layout & Spice Extraction
