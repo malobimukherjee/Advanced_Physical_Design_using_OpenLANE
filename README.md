@@ -631,3 +631,137 @@ Modified Layout:
 ![Screenshot from 2023-09-17 12-25-15](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/a22e4c0a-ef58-49b5-90e1-de37e282d53c)
 
 </details>
+
+## Day 4
+<details>
+<summary>Pre-layout Timing Analysis And Importance Of Good Clock Tree</summary>
+
+Timing Modelling Using Delay Tables:
+
+To ensure that the CMOS Inverter's A and Y ports, situated on the li1 layer, adhere to the port requirements, it's crucial to confirm that they are precisely located at the intersection of horizontal and vertical tracks. This verification can be accomplished by consulting the "tracks.info" file, which furnishes details regarding track spacing and orientation. 
+
+To guarantee that the ports align precisely at the intersection point, it's necessary to synchronize the grid spacing in Magic (tkcon) with the X and Y values of the li1 layer. This grid-track alignment can be established using the following command:
+
+```bash
+grid 0.46um 0.34um 0.23um 0.17um
+```
+
+![Screenshot from 2023-09-17 12-28-39](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/4e014708-68ad-400b-8974-1e66f7de54c7)
+
+## Creating Port Definition
+
+![Screenshot from 2023-09-17 12-30-24](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/a3d4297a-520d-461f-aa08-e14d35a6832e)
+
+## Standard Cell LEF Generation
+
+Before the extraction Of LEF file we have to define the function of each port using the following commands:
+
+```bash
+port A class input
+port A use signal
+
+port Y class output
+port Y use signal
+
+port VPWR class inout
+port VPWR use power
+
+port VGND class inout
+port VPWR use ground
+```
+Now to extract file following commands is used:
+
+```bash
+lef write
+```
+
+![Screenshot from 2023-09-17 12-32-52](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/bdfa7dc7-4f6f-464f-ba57-9a8ad0d61848)
+
+## Integrating Custom Cell in OpenLANE
+
+We should copy the extracted LEF file to picorv32a source directory, and also sky130_fd_sc_hd_typical.lib file from vsdcelldesign/libs ditrectory
+
+```bash
+cp sky130_vsdinv.lef /home/shivangi/OpenLane/designs/picorv32a/src/
+cp sky130_fd_sc_hd__* /home/shivangi/OpenLane/designs/picorv32a/src/
+```
+We have to modify config.tcl file also
+
+```bash
+
+# Design
+set ::env(DESIGN_NAME) "picorv32a"
+
+set ::env(VERILOG_FILES) "$::env(DESIGN_DIR)/src/picorv32a.v"
+
+set ::env(CLOCK_PORT) "clk"
+set ::env(CLOCK_NET) $::env(CLOCK_PORT)
+
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) {1}
+
+set ::env(LIB_SYNTH) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__typical.lib"
+set ::env(LIB_SLOWEST) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__slow.lib"
+set ::env(LIB_FASTEST) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__fast.lib"
+set ::env(LIB_TYPICAL) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__typical.lib"
+
+set ::env(EXTRA_LEFS) [glob $::env(OPENLANE_ROOT)/designs/$::env(DESIGN_NAME)/src/*.lef]
+
+set filename $::env(DESIGN_DIR)/$::env(PDK)_$::env(STD_CELL_LIBRARY)_config.tcl
+if { [file exists $filename] == 1} {
+	source $filename
+}
+```
+To invoke OpenLANE and run synthesis with the new standard cell library, use the following commands:
+
+```bash
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+```
+![Screenshot from 2023-09-17 12-44-41](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/d1167b1f-29e1-4dc5-a405-37fad06d9750)
+
+## Clock Tree Synthesis
+
+Commands to run clock tree synthesis
+
+```bash
+run_cts
+write_verilog ./designs/picorv32a/picorv32a_cts.v
+```
+
+![Screenshot from 2023-09-17 12-46-27](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/57f62a7e-8616-4262-83eb-c964d2650758)
+
+Since clock tree synthesis has not been performed yet, the analysis is with respect to ideal clocks and only setup time slack is taken into consideration. The slack value is the difference between data required time and data arrival time. The worst slack value must be greater than or equal to zero. If a negative slack is obtained, following steps may be followed:
+
+Change synthesis strategy, synthesis buffering and synthesis sizing values
+
+Review maximum fanout of cells and replace cells with high fanout
+
+Commands:
+
+```bash
+openroad
+read_lef <path of merge.nom.lef>
+read_def <path of def>
+write_db pico_cts.db
+read_db pico_cts.db
+read_verilog /home/parallels/OpenLane/designs/picorv32a/runs/RUN_09-09_11-20/results/synthesis/picorv32a.v
+read_liberty $::env(LIB_SYNTH_COMPLETE)
+read_sdc /home/parallels/OpenLane/designs/picorv32a/src/my_base.sdc
+set_propagated_clock (all_clocks)
+report_checks -path_delay min_max -format full_clock_expanded -digits 4
+```
+
+![268468416-0dad3b25-be9b-422d-9e5e-2238ebd937fe](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/d84df8a1-30e1-4742-91a3-d4ae1b7243e2)
+
+
+![268468414-0754f4d3-ea2f-46a1-a7b2-ea05c633469b](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/ae464f8e-3e61-40df-94ba-e6cc590575fb)
+
+
+Commands to check clock buffers :
+
+```bash
+echo $::env(CTS_CLK_BUFFER_LIST)
+set $::env(CTS_CLK_BUFFER_LIST) [lreplace $::env(CTS_CLK_BUFFER_LIST) 0 0]
+echo $::env(CTS_CLK_BUFFER_LIST)
+```
+</details>
