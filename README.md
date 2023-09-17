@@ -544,7 +544,90 @@ run
 .endc
 .end
 ```
+Command used for Simulation:
+```bash
+ngspice sky130_inv.spice
+```
+The output "y" is to be plotted with "time" and swept over the input "a":
 
+```bash
+plot y vs time a
+```
 
+![Screenshot from 2023-09-17 12-09-03](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/7bd7381d-2673-4142-be6d-f169bb1a1afe)
+
+Output Waveform:
+
+![Screenshot from 2023-09-17 15-49-55](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/3953c0c2-40c5-4b8a-a8e5-28dae7119371)
+
+## Magic DRC:
+
+Commands to download the package from the web and extract it:
+
+```bash
+wget http://opencircuitdesign.com/open_pdks/archive/drc_tests.tgz
+tar xfz drc_tests.tgz
+```
+
+Now, when we run the "met3.mag" file in Magic, we can observe an instance where a group of rules is not met in the Metal 1 layer. This failure could be due to issues with the patterning of the metal layer, including the presence of shorts or opens. These issues have the potential to disrupt electrical connections within an integrated circuit design.
+
+```bash
+magic -d XR met3.mag
+```
+![Screenshot from 2023-09-17 12-12-44](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/22b36f79-d5af-420a-8856-566be645fd39)
+
+![Screenshot from 2023-09-17 12-13-15](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/0b2804a3-da79-4217-aca0-a23c587634b1)
+
+Commands to see metal cuts:
+
+```bash
+cif see VIA2
+```
+![Screenshot from 2023-09-17 12-15-48](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/573e69d9-037d-48ec-ba21-60f1c38a0f2e)
+
+## Lab To Fix poly.9 error in SKY130 Tech File
+
+Command to load poly file
+
+```bash
+load poly.mag
+```
+![Screenshot from 2023-09-17 12-18-43](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/1e3116d5-6148-4258-942f-2da778f1de8e)
+
+As we can see there are some errors, to rectify it we need to make some adjustment in SKY130 technology file
+
+In line
+```bash
+spacing npres *nsd 480 touching_illegal \
+	"poly.resistor spacing to N-tap < %d (poly.9)"
+```
+
+![Screenshot from 2023-09-17 12-20-07](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/7d1f0888-af83-478c-9fa8-9f5ddd6b4666)
+
+Change to
+
+```bash
+spacing npres allpolynonres 480 touching_illegal \
+	"poly.resistor spacing to N-tap < %d (poly.9)"
+```
+also
+
+```bash
+spacing xhrpoly,uhrpoly,xpc alldiff 480 touching_illegal \
+
+	"xhrpoly/uhrpoly resistor spacing to diffusion < %d (poly.9)"
+```
+
+Change to
+
+```bash
+spacing xhrpoly,uhrpoly,xpc allpolynonres 480 touching_illegal \
+
+	"xhrpoly/uhrpoly resistor spacing to diffusion < %d (poly.9)"
+```
+
+Modified Layout:
+
+![Screenshot from 2023-09-17 12-25-15](https://github.com/malobimukherjee/Advanced_Physical_Design_using_OpenLANE/assets/141206513/a22e4c0a-ef58-49b5-90e1-de37e282d53c)
 
 </details>
