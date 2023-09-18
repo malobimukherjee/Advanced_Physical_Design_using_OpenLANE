@@ -686,8 +686,8 @@ lef write
 We should copy the extracted LEF file to picorv32a source directory, and also sky130_fd_sc_hd_typical.lib file from vsdcelldesign/libs ditrectory
 
 ```bash
-cp sky130_vsdinv.lef /home/shivangi/OpenLane/designs/picorv32a/src/
-cp sky130_fd_sc_hd__* /home/shivangi/OpenLane/designs/picorv32a/src/
+cp sky130_vsdinv.lef /home/malobi/OpenLane/designs/picorv32a/src/
+cp sky130_fd_sc_hd__* /home/malobi/OpenLane/designs/picorv32a/src/
 ```
 We have to modify config.tcl file also
 
